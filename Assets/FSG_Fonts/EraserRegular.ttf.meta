@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: ded1c0403b1600845bf76ce8ff908b92
+timeCreated: 1504867488
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Eraser
+  fontNames:
+  - Eraser
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
