@@ -105,6 +105,22 @@ public class LauncherController : MonoBehaviour
 
         //Use GameObjects FindObjectWithTag method to setup our references to the bottom and side fruitLaunchers.
         bottomFruitLaunchers = GameObject.FindGameObjectsWithTag(Tags.bottomFruitLaunchers);
+        List<string> name = new List<string>();
+        int m = 0;
+        foreach (GameObject g in bottomFruitLaunchers) {
+            name.Add(g.name);
+        }
+        GameObject[] a = new GameObject[9];
+        name.Sort();
+        for (int i = 0; i < name.Count; i++) {
+            for (int j = 0; j< bottomFruitLaunchers.Length; j++) {
+                if(bottomFruitLaunchers[j].name.Equals(name[i])) {
+                    a[i] = bottomFruitLaunchers[j];
+                    break;
+                }
+            }
+        }
+        bottomFruitLaunchers = a;
         //sideFruitLaunchers = GameObject.FindGameObjectsWithTag(Tags.sideFruitLaunchers);
 
         //Initialize the lists  "bottomLaunchersScriptReference" && "sideLaunchersScriptReference"
