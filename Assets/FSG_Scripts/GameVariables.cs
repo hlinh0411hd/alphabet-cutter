@@ -22,11 +22,11 @@ public static class GameVariables
             Experience = value * 500;
         }
     }
+    public static string correct = "";                                                          //correct word
+    public static string longerWord = "";
     public static float splatterQuadSpawnDistance = 55f;                                        //this is the distance from 0,0,0 on the z-axis that the fruit splatters are spawned
-    public static int WordGuessModeScore;                                                          //the score var used for each round of WordGuess mode
-    public static int WordGuessModeHighestScore = PlayerPrefs.GetInt(Tags.highestWordGuessScore);     //the Highest Score achieved in WordGuessMode which is stored via PlayerPrefs
-    public static int ClassicModeScore;                                                         //the score var used for each round of classic mode
-    public static int ClassicModeHighestScore = PlayerPrefs.GetInt(Tags.highestClassicScore);   //the Highest Score achieved in classicMode which is stored via PlayerPrefs
+    public static int ClassicModeScore;                                                          //the score var used for each round of Classic mode
+    public static int ClassicModeHighestScore = PlayerPrefs.GetInt(Tags.highestClassicScore);     //the Highest Score achieved in ClassicMode which is stored via PlayerPrefs
     public static int RelaxModeScore;                                                           //the score var used for each round of relax mode
     public static int RelaxModeHighestScore = PlayerPrefs.GetInt(Tags.highestRelaxScore);       //the Highest Score achieved in relaxMode which is stored via PlayerPrefs
     public static float soundVolume = 0.8f;                                                     //global sound volume

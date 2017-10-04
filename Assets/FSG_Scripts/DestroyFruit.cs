@@ -17,13 +17,13 @@ public class DestroyFruit : MonoBehaviour
     public GameObject fruitExplosionParticleSystem;     // the particle system that is the fruit explosion I.e. liquid drops,balls,seeds... i reduced mine to round drops.(The Guts of Fruit)
 
     private Rigidbody thisRB;                           // a reference to this rigidbody.
-    private FruitDestroyCombo comboCounter;             // a reference to our ComboCounter class.  This is attached to a canvas in the scene(to control the fade/position of Hit Combo Text)
+    //private FruitDestroyCombo comboCounter;             // a reference to our ComboCounter class.  This is attached to a canvas in the scene(to control the fade/position of Hit Combo Text)
     private MeshRenderer[] fruitChildMeshRenderers;     // these are the child Mesh Renderers of the whole fruit objects (when not in a game Scene).
 
-    private Vector3 resetPos;                           // a vector3 that has a value of 0,0,0
+    //private Vector3 resetPos;                           // a vector3 that has a value of 0,0,0
     
 
-    private TwoTimesScoreEffect twoXScore;              // this is a reference to the 2xScore gameobject in the scene(each effect has a scene object).
+    //private TwoTimesScoreEffect twoXScore;              // this is a reference to the 2xScore gameobject in the scene(each effect has a scene object).
     private AudioSource gameSfxAudioSource;             // a reference to the gameSfxAudioSource.. also a child of screenFader prefab(if errors regarding either, start game from splashScene.
     public AudioSource thisObjectsAudioSource;          // reference to this objects audio source (for menu fruit only)... temple bell sound
     public AudioClip[] splatSounds;                     // an array of splat sounds.  The splat sounds should be dragged to this field in the inspector (may need to lock inspector, depending on locale)
@@ -55,7 +55,7 @@ public class DestroyFruit : MonoBehaviour
     {
         SetupFruitDebirsArray();
         // we will use resetPos as the level origin 0,0,0
-        resetPos = new Vector3(0, 0, 0);
+        //resetPos = new Vector3(0, 0, 0);
         //if inGameScene (checked true in the inspector)... (only uncheck if the fruit is for a Menu Scene)
         if (inGameScene)
         {
@@ -66,7 +66,7 @@ public class DestroyFruit : MonoBehaviour
             //setup our ComboCounter reference... 
             //comboCounter = GameObject.FindGameObjectWithTag(Tags.comboCanvasTag).GetComponent<FruitDestroyCombo>();
             //setup our TwoTimesScoreEffectGameObject reference...   (All PowerUp Effects have a script on a GameObject in the game scenes (i.e. scenes 2.3,4);
-            twoXScore = GameObject.FindGameObjectWithTag(Tags.twoTimesScoreEffectGameObjectTag).GetComponent<TwoTimesScoreEffect>();
+            //twoXScore = GameObject.FindGameObjectWithTag(Tags.twoTimesScoreEffectGameObjectTag).GetComponent<TwoTimesScoreEffect>();
         }
         else
         {
@@ -178,12 +178,12 @@ public class DestroyFruit : MonoBehaviour
         if (inGameScene)
         {
             //if in game scene and we have a combo counter in the scene.
-            if (comboCounter)
-            {
-                //call ChekTimeAndRecordFruit(Vector3) on the ComberCounter reference.  we feed it this fruitPos for a parameter.
-                comboCounter.CheckTimeAndRecordFruit(fruitPos);
+            //if (comboCounter)
+            //{
+            //    //call ChekTimeAndRecordFruit(Vector3) on the ComberCounter reference.  we feed it this fruitPos for a parameter.
+            //    comboCounter.CheckTimeAndRecordFruit(fruitPos);
 
-            }
+            //}
         }
         //listOfGibsAvailable[fruitDebrisNum].AddComponent<WordData>();
         //WordData worddata = listOfGibsAvailable[fruitDebrisNum].GetComponent<WordData>();
@@ -212,23 +212,23 @@ public class DestroyFruit : MonoBehaviour
 
                 break;
 
-            case 2:
-                //case 2 - we do the same but with the first Diagonal direction.
+            //case 2:
+            //    //case 2 - we do the same but with the first Diagonal direction.
                
-                Instantiate(listOfGibsAvailable[fruitDebrisNum], transform.position, Quaternion.identity);
-                //commented out Debug for release.
-                //Debug.Log("1Diagnol");
+            //    Instantiate(listOfGibsAvailable[fruitDebrisNum], transform.position, Quaternion.identity);
+            //    //commented out Debug for release.
+            //    //Debug.Log("1Diagnol");
 
-                break;
+            //    break;
 
-            case 3:
-                //case 3 - we do the same but with the second Diagonal direction.
+            //case 3:
+            //    //case 3 - we do the same but with the second Diagonal direction.
                 
-                Instantiate(listOfGibsAvailable[fruitDebrisNum], transform.position, Quaternion.identity);
-                //commented out Debug for release.
-                //Debug.Log("Diagnol_reg");
+            //    Instantiate(listOfGibsAvailable[fruitDebrisNum], transform.position, Quaternion.identity);
+            //    //commented out Debug for release.
+            //    //Debug.Log("Diagnol_reg");
 
-                break;
+            //    break;
 
             default:
                 //if there is a prob we will use case 1 like last time.  horizontal swipes are most likely IMO..
@@ -273,18 +273,18 @@ public class DestroyFruit : MonoBehaviour
                 //    GameVariables.ClassicModeScore++;
 
                 //    break;
-                //case GameModes.WordGuess:
-                //    //if we are in WordGuess gameMode, then if "CutFruit" is called increment the WordGuessModeScore...
-                //    //if no 2x power up is active.  if a 2x power up is active then add 2 points to WordGuessModeScore.
+                //case GameModes.Classic:
+                //    //if we are in Classic gameMode, then if "CutFruit" is called increment the ClassicModeScore...
+                //    //if no 2x power up is active.  if a 2x power up is active then add 2 points to ClassicModeScore.
                 //    if (twoXScore.twoTimesScoreIsOn)
                 //    {
                 //        //increase score by 2
-                //        GameVariables.WordGuessModeScore += 2;
+                //        GameVariables.ClassicModeScore += 2;
                 //    }
                 //    else
                 //    {
                 //        //increase score by 1
-                //        GameVariables.WordGuessModeScore+=0;
+                //        GameVariables.ClassicModeScore+=0;
                 //    }
 
                 //    break;
@@ -307,8 +307,8 @@ public class DestroyFruit : MonoBehaviour
             thisRB.gameObject.SetActive(false);
 
             //for good measure we store them all in one place... 0,0,0.  The Position and Velocity get zero'd
-            thisRB.position = resetPos;
-            thisRB.velocity = resetPos;
+            //thisRB.position = resetPos;
+            //thisRB.velocity = resetPos;
 
 
         }
@@ -324,6 +324,7 @@ public class DestroyFruit : MonoBehaviour
             //we disable the collider so it can not be hit again... Also prevents other fruit from being triggered.
             for (int i = 0; i < fruitCollidersInScene.Count; i++)
             {
+                Debug.Log("here");
                 fruitCollidersInScene[i].enabled = false;
             }
 
@@ -361,14 +362,14 @@ public class DestroyFruit : MonoBehaviour
         //add the individual gibs gameobject to our Gibs List
         listOfGibsAvailable.Add(gibsForVerticalCuts);
         listOfGibsAvailable.Add(gibsForHorizontalCuts);
-        listOfGibsAvailable.Add(gibsFor1DiagonalCuts);
-        listOfGibsAvailable.Add(gibsForDiagonalCuts);
+        //listOfGibsAvailable.Add(gibsFor1DiagonalCuts);
+        //listOfGibsAvailable.Add(gibsForDiagonalCuts);
 
         //add the individual slices gameobject to our Slices List
         listOfSlicesAvailable.Add(sliceForVerticalCuts);
         listOfSlicesAvailable.Add(sliceForHorizontalCuts);
-        listOfSlicesAvailable.Add(sliceFor1DiagonalCuts);
-        listOfSlicesAvailable.Add(sliceForDiagonalCuts);
+        //listOfSlicesAvailable.Add(sliceFor1DiagonalCuts);
+        //listOfSlicesAvailable.Add(sliceForDiagonalCuts);
 
     }
 

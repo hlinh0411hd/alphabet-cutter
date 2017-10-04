@@ -7,7 +7,7 @@ using System.Collections;
 /// </summary>
 public enum GameModes
 {
-    WordGuess,
+    Classic,
     Relax
 }
 
@@ -16,8 +16,7 @@ public enum GameModes
 /// state so that as soon as a lose/time up conditions is met... it'll end the game.  This class also keeps the UI
 /// text fields updated with the score.
 /// </summary>
-public class GameController : MonoBehaviour
-{
+public class GameController : MonoBehaviour {
     public static GameController GameControllerInstance;        //static reference to this game controller
     private CountdownTimer roundTimer;                          //a reference to the countdown timer(connected to same parent body)
     [Header("Select GameMode for Testing Purposes.")]
@@ -26,24 +25,21 @@ public class GameController : MonoBehaviour
     public GameObject gameOverPanel;                            //the gameOverPanel that hold the Game Over UI Image
     public GameObject[] blueXClassicMode;                       //classic mode blue x's.  The 3 X's on the UI that you start with in Classic Mode
     public GameObject[] redXClassicMode;                        //Classic mode red x's.  The XXX on the UI (under the Blue X's), that are show when you miss fruit.
-    public Text classicText;                                    //the txt that is the classic mode current store
-    public Text WordGuessText;                                     //the txt that is the WordGuess mode current store
+    public Text ClassicText;                                     //the txt that is the Classic mode current store
     public Text relaxText;                                      //the txt that is the relax mode current store
-    public Text classicHighestText;                             //the txt that is the classic mode highest store
-    public Text WordGuessHighestText;                              //the txt that is the WordGuess mode highest store
+    public Text ClassicHighestText;                              //the txt that is the Classic mode highest store
     public Text relaxHighestText;                               //the txt that is the relax mode highest store
     public Text wordText;
-    public Text suggestion;
+    public Text longerWord;
     public Text antidot;
     public GameObject slicerGO;                                 //a reference to our FNCTouchSlicer
     private bool gameHasStarted;                                //boolean game has started???
     public bool gameIsRunning;                                 //boolean game is running??
     public float waitForMenuAtEnd;                              //how long to wait before the settings/pause menu pops up?
     public int numAntidot;
-    private Vector3 g = Physics.gravity;
+    //private Vector3 g = Physics.gravity;
     // Use this for pre-initialization
-    void Awake()
-    {
+    void Awake() {
         //our instance reference to this GameController is assigned THIS.
         GameControllerInstance = this;
         //roundTimer reference is assigned the CountdownTimer that is connected to this gameobject.
@@ -53,22 +49,21 @@ public class GameController : MonoBehaviour
         //boolean gameIsRunning is True.
         gameIsRunning = true;
         wordText.text = "";
-        suggestion.text = "Suggest: ";
+        longerWord.text = "";
         numAntidot = 0;
     }
 
 
     //OnEnable is called when the object becomes enabled and active
-    void OnEnable()
-    {
+    void OnEnable() {
 
         wordText.text = "";
-        suggestion.text = "Suggest: ";
+        longerWord.text = "";
         numAntidot = 0;
         //we zero out all of our static variables dealing with score.
         GameVariables.FruitMissed = 0;
         GameVariables.ClassicModeScore = 0;
-        GameVariables.WordGuessModeScore = 0;
+        GameVariables.ClassicModeScore = 0;
         GameVariables.RelaxModeScore = 0;
         //then we RESET the splatterQuadSpawnDistance to 55f.  This static var is reset every round.  we increment it when we spawn a splatter, so that
         //they always spawn on top of the previous one... they stop around 45f worse case scenario, and in orthographic mode that is still acceptable.
@@ -76,8 +71,7 @@ public class GameController : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
-    {
+    void Start() {
 
         //start coroutine... ChooseGameModeAndCallRoundStart()... Long Name
         StartCoroutine(ChooseGameModeAndCallRoundStart());
@@ -90,11 +84,9 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// FNC_SlowUpdate Method again... Run Unimportant stuff here.  In this class at the least the UI updates will be in here.
     /// </summary>
-    private void FNC_SlowUpdate()
-    {
+    private void FNC_SlowUpdate() {
         //if game is running we will...
-        if (gameIsRunning)
-        {
+        if(gameIsRunning) {
             //call the updateUIText method.
             UpdateUIText();
         }
@@ -102,11 +94,9 @@ public class GameController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         //if game is running we will...
-        if (gameIsRunning)
-        {
+        if(gameIsRunning) {
             MonitorGameState();
             //UpdateUIText();//moved to SlowUpdat()
         }
@@ -117,18 +107,19 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// UpdateUIText does exactly what you would imagine.  It updates UI Text.
     /// </summary>
-    private void UpdateUIText()
-    {
+    public void UpdateUIText() {
         //we update all the current scores.
-        WordGuessText.text = GameVariables.WordGuessModeScore.ToString();
-        classicText.text = GameVariables.ClassicModeScore.ToString();
+        ClassicText.text = GameVariables.ClassicModeScore.ToString();
         relaxText.text = GameVariables.RelaxModeScore.ToString();
         //we update the highest scores.
-        WordGuessHighestText.text = GameVariables.WordGuessModeHighestScore.ToString();
-        classicHighestText.text = GameVariables.ClassicModeHighestScore.ToString();
+        ClassicHighestText.text = GameVariables.ClassicModeHighestScore.ToString();
         relaxHighestText.text = GameVariables.RelaxModeHighestScore.ToString();
-        wordText.text = FNCTouchSlicer.getSlice();
-        suggestion.text = "Suggest: " + LauncherController.suggestion;
+        if(!FNCTouchSlicer.trueWord) {
+            wordText.text = FNCTouchSlicer.getSlice();
+        }
+        if(!FNCTouchSlicer.trueLongerWord) {
+            longerWord.text = GameVariables.longerWord;
+        }
         antidot.text = numAntidot.ToString();
     }
 
@@ -138,8 +129,7 @@ public class GameController : MonoBehaviour
     /// then Stores the new experience in PlayerPrefs/
     /// </summary>
     /// <param name="fruitDestroyed"></param>
-    private void UpdatePlayerExperienceAndLevel(int fruitDestroyed)
-    {
+    private void UpdatePlayerExperienceAndLevel(int fruitDestroyed) {
         //update Experience with FruitDestroyed value
         GameVariables.Experience += fruitDestroyed;
         //save Experience in PlayerPrefs
@@ -153,17 +143,15 @@ public class GameController : MonoBehaviour
     /// on the selected mode/variable It will write the update to PlayerPrefs.
     /// </summary>
     /// <param name="amt"></param>
-    private void UpdateHighestScore(int amt)
-    {
-        switch (gameModes)
-        {
-            //if in WordGuess game mode...
-            case GameModes.WordGuess:
+    private void UpdateHighestScore(int amt) {
+        switch(gameModes) {
+            //if in Classic game mode...
+            case GameModes.Classic:
                 //ClassicModeHighestScore gets assigned "amt"
-                GameVariables.WordGuessModeHighestScore = amt;
+                GameVariables.ClassicModeHighestScore = amt;
 
                 //store the new amount in PlayerPrefs
-                PlayerPrefs.SetInt(Tags.highestWordGuessScore, GameVariables.WordGuessModeScore);
+                PlayerPrefs.SetInt(Tags.highestClassicScore, GameVariables.ClassicModeScore);
                 break;
             //if in Relax game mode...
             case GameModes.Relax:
@@ -186,8 +174,7 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// This method stops the game time.
     /// </summary>
-    private void StopTime()
-    {
+    private void StopTime() {
         //set Time.timeScale to 0f;
         Time.timeScale = 0.0f;
     }
@@ -197,8 +184,7 @@ public class GameController : MonoBehaviour
     /// A redundant local private method to access our settings/menu instance var(and the method CallPauseAndMenu()).  So that we can invoke this
     /// Method about a half a second after round end. 
     /// </summary>
-    private void LocalPauseAndSettingsMenuCall()
-    {
+    private void LocalPauseAndSettingsMenuCall() {
         //SettingsAndPauseMenu.instance.CallPauseAndMenu();
 
         //call the settings menu onto the screen(without the pause).
@@ -209,21 +195,30 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// MonitorGameState is the main Method in the GameController Class.  The Method 
     /// </summary>
-    private void MonitorGameState()
-    {
+    public void MonitorGameState() {
 
         ////////////////////////////////
-        ////_____WordGuess-MODE_______////
+        ////_____Classic-MODE_______////
         ///////////////////////////////
 
 
-        //if the current game mode is WordGuess...
-        if (gameModes == GameModes.WordGuess)
-        {
+        //if the current game mode is Classic...
+        if(gameModes == GameModes.Classic) {
             //if roundTimer.timeLeft is less than or equal to 0.01 && gameHasStarted
-            //Physics.gravity = g + new Vector3(0, -0.1f * GameVariables.WordGuessModeScore/3, 0);
-            if (roundTimer.timeLeft <= 0.01 && gameHasStarted)
-            {
+            //Physics.gravity = g + new Vector3(0, -0.1f * GameVariables.ClassicModeScore/3, 0);
+            if(roundTimer.timeLeft <= 0.01 && gameHasStarted) {
+
+                // gameover and compute score again, update ui
+
+                if(GameVariables.correct.Length > 0) {
+                    AddToFruitDestroyedScore(GameVariables.correct.Length, true);
+                    TwoTimesScoreEffect tw = GameObject.FindGameObjectWithTag(Tags.twoTimesScoreEffectGameObjectTag).GetComponent<TwoTimesScoreEffect>();
+                    if(tw.twoTimesScoreIsOn) {
+                        AddToFruitDestroyedScore(GameVariables.correct.Length, true);
+                    }
+                    GameController.GameControllerInstance.UpdateUIText();
+                    Debug.Log(GameVariables.correct);
+                }
                 //Debug.Log("Game Over");
 
                 //activate the gameOverPanel
@@ -235,23 +230,21 @@ public class GameController : MonoBehaviour
                 //invoke our settings/menu canvas to provoke a response...
                 Invoke("LocalPauseAndSettingsMenuCall", waitForMenuAtEnd);
 
-                //if GameVariables.WordGuessModeHighestScore is less than GameVariables.WordGuessModeScore then clearly we need to update the highest score
-                if (GameVariables.WordGuessModeHighestScore < GameVariables.WordGuessModeScore)
-                {
-                    //we update the highest score by calling UpdateHighestScore(GameVariables.WordGuessModeScore(WordGuessModeScore))
-                    UpdateHighestScore(GameVariables.WordGuessModeScore);
+                //if GameVariables.ClassicModeHighestScore is less than GameVariables.ClassicModeScore then clearly we need to update the highest score
+                if(GameVariables.ClassicModeHighestScore < GameVariables.ClassicModeScore) {
+                    //we update the highest score by calling UpdateHighestScore(GameVariables.ClassicModeScore(ClassicModeScore))
+                    UpdateHighestScore(GameVariables.ClassicModeScore);
                 }
 
                 //We also need to update player experience... we pass in our new score to do that.
-                UpdatePlayerExperienceAndLevel(GameVariables.WordGuessModeScore);
+                UpdatePlayerExperienceAndLevel(GameVariables.ClassicModeScore);
 
                 //and we set gameIsRunning to false
                 gameIsRunning = false;
 
             }
             //else... game clock is still running, and we should still be launching...
-            else
-            {
+            else {
                 //Access the LaunchControllers static Instance and call ReduceLaunchTimersAndLaunchObjects...
                 LauncherController.LaunchControllerInstance.ReduceLaunchTimersAndLaunchObjects();
             }
@@ -263,12 +256,10 @@ public class GameController : MonoBehaviour
         ///////////////////////////////
 
 
-        //if the current game mode is WordGuess...
-        if (gameModes == GameModes.Relax)
-        {
+        //if the current game mode is Classic...
+        if(gameModes == GameModes.Relax) {
             //if roundTimer.timeLeft is less than or equal to 0.01 && gameHasStarted
-            if (roundTimer.timeLeft <= 0.01 && gameHasStarted)
-            {
+            if(roundTimer.timeLeft <= 0.01 && gameHasStarted) {
                 //Debug.Log("Game Over");
 
                 //activate the gameOverPanel
@@ -280,10 +271,9 @@ public class GameController : MonoBehaviour
                 //invoke our settings/menu canvas to provoke a response...
                 Invoke("LocalPauseAndSettingsMenuCall", waitForMenuAtEnd);
 
-                //if GameVariables.WordGuessModeHighestScore is less than GameVariables.WordGuessModeScore then clearly we need to update the highest score
-                if (GameVariables.RelaxModeHighestScore < GameVariables.RelaxModeScore)
-                {
-                    //we update the highest score by calling UpdateHighestScore(GameVariables.WordGuessModeScore(WordGuessModeScore))
+                //if GameVariables.ClassicModeHighestScore is less than GameVariables.ClassicModeScore then clearly we need to update the highest score
+                if(GameVariables.RelaxModeHighestScore < GameVariables.RelaxModeScore) {
+                    //we update the highest score by calling UpdateHighestScore(GameVariables.ClassicModeScore(ClassicModeScore))
                     UpdateHighestScore(GameVariables.RelaxModeScore);
                 }
 
@@ -295,8 +285,7 @@ public class GameController : MonoBehaviour
 
             }
             //else... game clock is still running, and we should still be launching...
-            else
-            {
+            else {
                 //Access the LaunchControllers static Instance and call ReduceLaunchTimersAndLaunchObjects...
                 LauncherController.LaunchControllerInstance.ReduceLaunchTimersAndLaunchObjects();
 
@@ -311,11 +300,9 @@ public class GameController : MonoBehaviour
     /// </summary>
     /// <param name="hasTimer"></param>
     /// <param name="gameTime"></param>
-    private void StartClassicModeGame(bool hasTimer, float gameTime)
-    {
+    private void StartClassicModeGame(bool hasTimer, float gameTime) {
         //if hasTimer is true... (in classic mode it should be false, so the following code block will not be run... (it'll pick up at "roundTimer.DisableTimerText();") **(classic mode does not)
-        if (hasTimer)
-        {
+        if(hasTimer) {
             //this should not happen in classic mode....
             roundTimer.StartTimer(gameTime);
         }
@@ -327,25 +314,6 @@ public class GameController : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// Method called by Coroutine to start a WordGuess Mode round.  If hasTimer is true then we call StartTimer on our CountdownTimer Class, and we
-    /// pass the amount of time that should be on the clock.  Then we change the boolean "gameHasStarted" which will remain true until round end.
-    /// </summary>
-    /// <param name="hasTimer"></param>
-    /// <param name="gameTime"></param>
-    private void StartWordGuessModeGame(bool hasTimer, float gameTime)
-    {
-        //if has timer is true then we...  **(WordGuess mode does)
-        if (hasTimer)
-        {
-            //will call StartTimer and pass in the gameTime(60f) for WordGuess Mode...
-            roundTimer.StartTimer(gameTime);
-
-        }
-
-        //then we set gameHasStarted to true, and start slicing!
-        gameHasStarted = true;
-    }
 
     /// <summary>
     /// Method called by Coroutine to start a Relax Mode round.  If hasTimer is true then we call StartTimer on our CountdownTimer Class, and we
@@ -353,12 +321,10 @@ public class GameController : MonoBehaviour
     /// </summary>
     /// <param name="hasTimer"></param>
     /// <param name="gameTime"></param>
-    private void StartRelaxModeGame(bool hasTimer, float gameTime)
-    {
+    private void StartRelaxModeGame(bool hasTimer, float gameTime) {
         //if has timer is true then we...  **(relax mode does)
-        if (hasTimer)
-        {
-            //will call StartTimer and pass in the gameTime(60f) for WordGuess Mode...
+        if(hasTimer) {
+            //will call StartTimer and pass in the gameTime(60f) for Classic Mode...
             roundTimer.StartTimer(gameTime);
 
         }
@@ -371,8 +337,7 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// This Method Zeros out the "timeLeft" and disables the FNCTouchSlicer.
     /// </summary>
-    private void ZeroGameTimeAndEndGame()
-    {
+    private void ZeroGameTimeAndEndGame() {
         //assign a value of 0f to roundTimer.timeLeft.
         roundTimer.timeLeft = 0f;
 
@@ -425,10 +390,8 @@ public class GameController : MonoBehaviour
     /// This Method is called at the start of the scene... It starts the game with the appropriate gameObjects/Settings
     /// </summary>
     /// <returns></returns>
-    IEnumerator ChooseGameModeAndCallRoundStart()
-    {
-        switch (gameModes)
-        {
+    IEnumerator ChooseGameModeAndCallRoundStart() {
+        switch(gameModes) {
 
 
             //if we are in GameModes.Classic then we need to...
@@ -452,17 +415,17 @@ public class GameController : MonoBehaviour
 
 
 
-            //if we are in GameModes.WordGuess then we need to...
-            case GameModes.WordGuess:
+            //if we are in GameModes.Classic then we need to...
+            case GameModes.Classic:
 
                 //wait for a few seconds while "60 seconds" and "Go!!" text slide on screen and then fade.
                 yield return new WaitForSeconds(3.5f);
 
-                //our Static variable GameVariables.WordGuessModeScore needs to be set to zero (to make sure it is cleared)
-                GameVariables.WordGuessModeScore = 0;
+                //our Static variable GameVariables.ClassicModeScore needs to be set to zero (to make sure it is cleared)
+                GameVariables.ClassicModeScore = 0;
 
-                //then we call StartWordGuessModeGame() and pass in true(hasTimer), and 60f(TimerTime)
-                StartWordGuessModeGame(true, 240f);
+                //then we call StartClassicModeGame() and pass in true(hasTimer), and 60f(TimerTime)
+                StartClassicModeGame(true, 240f);
 
                 //break... we are done.
                 break;
@@ -497,4 +460,33 @@ public class GameController : MonoBehaviour
         yield return null;
     }
 
+    public void AddToFruitDestroyedScore(int length = 0, bool correct = false) {
+        //if the GameControllers "gameModes" var is set to GameModes.Classic then...
+        if(GameController.GameControllerInstance.gameModes == GameModes.Classic) {
+            //then ClassicModeScore gets incremented by 1 :-)
+            if(!correct) {
+                GameVariables.ClassicModeScore += length;
+            } else {
+                GameVariables.ClassicModeScore += length;
+                TwoTimesScoreEffect tw = GameObject.FindGameObjectWithTag(Tags.twoTimesScoreEffectGameObjectTag).GetComponent<TwoTimesScoreEffect>();
+                if(tw.twoTimesScoreIsOn) {
+                    GameVariables.ClassicModeScore += length;
+                }
+            }
+        }
+
+        ////if the GameControllers "gameModes" var is set to GameModes.Classic then...
+        //if (GameController.GameControllerInstance.gameModes == GameModes.Classic)
+        //{
+        //    //then ClassicModeScore gets incremented by 1 :-)
+        //    GameVariables.ClassicModeScore++;
+        //}
+
+        //if the GameControllers "gameModes" var is set to GameModes.Relax then...
+        if(GameController.GameControllerInstance.gameModes == GameModes.Relax) {
+            //then RelaxModeScore gets incremented by 1 :-)
+            GameVariables.RelaxModeScore++;
+        }
+
+    }
 }

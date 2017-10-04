@@ -341,7 +341,7 @@ public class ScreenFaderSingleton : Singleton<ScreenFaderSingleton>
         //above was used with ColorSwitchClone Only that which is noted has been changed for use with
         //FruitNinjaClone GameTempalte  We don't necessarily use just a "playerScore", we use "fruitCutIn_X_GameMode"
         //so because of this we will do... 
-        GameVariables.WordGuessModeScore = 0;
+        GameVariables.ClassicModeScore = 0;
         GameVariables.ClassicModeScore = 0;
         GameVariables.RelaxModeScore = 0;
 

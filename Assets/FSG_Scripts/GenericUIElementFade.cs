@@ -25,17 +25,17 @@ public class GenericUIElementFade : MonoBehaviour
     public float fadeOutDelayTimeForGoText;                         //fade out delay for "Go"
     public float fadeOutCompletedValueForGoText;                    //fade out complete value (0)
     public float fadeOutSpeedForGoText;                             //the speed to fade out
-    private Color zeroAlphaColor = new Color(0,0,0,0);              //a zeroAlpha color (may be used for making a sprite/image invisible.
+    //private Color zeroAlphaColor = new Color(0,0,0,0);              //a zeroAlpha color (may be used for making a sprite/image invisible.
 
     // Use this for initialization
     void Start()
     {
         //first we base the image/sprite type based on the gameMode we are in...
         switch(GameController.GameControllerInstance.gameModes) {
-            //if we are in WordGuess mode...
-            case GameModes.WordGuess:
+            //if we are in Classic mode...
+            case GameModes.Classic:
 
-                //in WordGuess mode we just have to change that amtTextImage.sprite gets assigned the "sixtImage"..
+                //in Classic mode we just have to change that amtTextImage.sprite gets assigned the "sixtImage"..
                 //amtTextImage.sprite = sixtyImage;
                 //call FadeOutImagers...
                 FadeOutImages();

@@ -59,11 +59,12 @@ public class FrenzyEffect : MonoBehaviour
         ////call the EndEffect() method
         //EndEffect();
         freezeEffect = GameObject.FindGameObjectWithTag(Tags.freezeEffectGameObjectTag).GetComponent<FreezeEffect>();
-        Debug.Log(freezeEffect.ToString());
+
         if (freezeEffect.freezeEffectIsOn) {
             Debug.Log("poison");
             freezeEffect.freezeEffectIsOn = false;
             freezeEffect.EndPotionBombEffect();
+            return;
         } else {
             Debug.Log("Wrong man");
             antidoteCount = Mathf.Min(1, antidoteCount + 1);

@@ -326,7 +326,7 @@ public class FruitDestroyCombo : MonoBehaviour
                 //case GameModes.Classic:
                 //    GameVariables.ClassicModeScore += fruitDestroyedInTime;
                 //    break;
-                case GameModes.WordGuess:
+                case GameModes.Classic:
                     GameVariables.ClassicModeScore += fruitDestroyedInTime;
                     break;
                 case GameModes.Relax:

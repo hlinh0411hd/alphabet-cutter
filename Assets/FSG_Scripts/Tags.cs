@@ -61,12 +61,10 @@ public static class Tags
     ///////////////////////////////////////////////////////////
 
     public static readonly string experience = "playerExperience";                                      // Tags.experience is "playerExperience" (reference to the "experience" text component)
-    public static readonly string WordGuessScore = "WordGuessScore";                                          // Tags.WordGuessScore is "WordGuessScore" (reference to the GameVariables.WordGuessScore)
     public static readonly string classicScore = "classicScore";                                        // Tags.classicScore is "classicScore" (reference to the GameVariables.ClassicScore)
     public static readonly string relaxScore = "relaxScore";                                            // Tags.relaxScore is "relaxScore" (reference to the GameVariables.RelaxScore)
 
-    public static readonly string highestWordGuessScore = "highestWordGuessModeScore";                        // Tags.highestWordGuessScore is "highestWordGuessModeScore" (reference to the GameVariables.highestWordGuessScore)
-    public static readonly string highestClassicScore = "highestClassicModeScore";                      // Tags.highestClassicScore is "highestClassicModeScore" (reference to the GameVariables.highestClassicScore)
+    public static readonly string highestClassicScore = "highestClassicModeScore";                        // Tags.highestClassicScore is "highestClassicModeScore" (reference to the GameVariables.highestClassicScore)
     public static readonly string highestRelaxScore = "highestRelaxModeScore";                          // Tags.highestRelaxScore is "highestRelaxModeScore" (reference to the GameVariables.highestRelaxScore)
 
 

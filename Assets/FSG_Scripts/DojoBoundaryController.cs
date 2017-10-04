@@ -10,8 +10,8 @@ public class DojoBoundaryController : MonoBehaviour
 {
     //public BoxCollider[] boundaryColliders;
 
-    private Vector3 resetPosition = new Vector3(0, 0, 0);         // the position that the fruit should be returned to after colliding with the boundary
-    private int usedRedXs;                                      // this is an int that represents the number of "red x's we are on".  The red X's that spawn in classic mode above lost fruit.
+    //private Vector3 resetPosition = new Vector3(0, 0, 0);         // the position that the fruit should be returned to after colliding with the boundary
+    //private int usedRedXs;                                      // this is an int that represents the number of "red x's we are on".  The red X's that spawn in classic mode above lost fruit.
     public GameObject[] fruitMissedX;                           // this is an array of GameObjects that holds the red X's
     public float redXHeight;                                    // this is the height that the red X's spawn at when a fruit is lost.
 

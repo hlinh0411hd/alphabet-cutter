@@ -89,10 +89,10 @@ public class FreezeEffect : MonoBehaviour
         yield return new WaitForSeconds(2f * indexTime);
         //StartCoroutine(FadeImages(freezeScreenSprites[2], 0f, 1f, decreaseFreezeDuration));
         if(freezeEffectIsOn) {
-            if(GameVariables.WordGuessModeScore >= 1) {
-                GameVariables.WordGuessModeScore -= 1;
+            if(GameVariables.ClassicModeScore >= 1) {
+                GameVariables.ClassicModeScore -= 1;
             } else {
-                GameVariables.WordGuessModeScore = 0;
+                GameVariables.ClassicModeScore = 0;
             }
         }
     }

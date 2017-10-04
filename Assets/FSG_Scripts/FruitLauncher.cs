@@ -12,9 +12,9 @@ public class FruitLauncher : MonoBehaviour
     public float force;                                     // the force at which the fruit/other objects are launched
     private float forceMin, forceMax;                        // the min and max force the fruit/other objects will be launched at
     private float basedForceMin, basedForceMax;
-    [Range(-0.01f, -1f)]
+    [Range(0f, -1f)]
     public float minXValue;                                 // the minimum value the fruit will be fired to the left(negative number)
-    [Range(0.01f, 1f)]
+    [Range(0f, 1f)]
     public float maxXValue;                                 // the minimum value the fruit will be fired to the right(positive number)
     public ObjectPoolScript[] fruitPoolScripts;             // the array of all the ObjectPoolScripts for the fruit
     public ObjectPoolScript[] bombAndPowerUpPoolScripts;    // the array of all the ObjectPoolScripts for the Bomb/PowerUps
@@ -27,8 +27,8 @@ public class FruitLauncher : MonoBehaviour
 
 
     private void Awake() {
-        basedForceMin = 30;
-        basedForceMax = 35;
+        basedForceMin = 35;
+        basedForceMax = 38;
     }
 
     private void Update() {
@@ -111,7 +111,7 @@ public class FruitLauncher : MonoBehaviour
         //force gets assigned Random.Range (between forceMin and forceMax)... 
         force = Random.Range(forceMin, forceMax);
         //create a new randomXValue and assign it a Random Value between minXValue and maxXValue...
-        float randomXValue = Random.Range(minXValue, maxXValue);
+        float randomXValue = Random.Range(minXValue - 0.3f, maxXValue + 0.3f);
         //create a new expVec = new Vector ( randomXValue for X , 1 for Y, 0 for Z )
         Vector3 expVec = new Vector3(randomXValue, 1, 0);
 
@@ -151,10 +151,8 @@ public class FruitLauncher : MonoBehaviour
     /// <returns></returns>
     public GameObject RetrieveFruitFromPool(char c)
     {
-
         string s = "Char" + c.ToString().ToUpper() + "Pool";
         GameObject poolChar = GameObject.Find(s);
-        Debug.Log(s);
         GameObject obj = poolChar.GetComponent<ObjectPoolScript>().GetPooledObject();
         if (obj != null)
         {

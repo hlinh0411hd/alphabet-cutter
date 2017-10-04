@@ -6,15 +6,14 @@ using System.Collections.Generic;
 /// <summary>
 /// The FNCTouchSlicer Class is responsible for recording the movement/direction of the Fruit Slicer, and calling the Destroy Class's Methods that destroy Fruit , Bombs , and PowerUps
 /// </summary>
-public class FNCTouchSlicer : MonoBehaviour
-{
+public class FNCTouchSlicer : MonoBehaviour {
     public static FNCTouchSlicer currentSlicer;                     // our static reference to this class
     public bool emulateTouchesWithMouse;                            // emulate touches with mouse is usually for editor testing but with simple 1 click games, it is a cheap way to ensure multi-platform support.
     public bool useColliderAndRaycast;                              // This boolean will also enable a long box collider that protrudes into scene.  Ticking box, helps with a little redundancy.(set true)
     public LayerMask sliceableObjects;                              // sliceObjects is our new LayerMask.  Only contains objects that need to be "Slice-able".
     public int maxQueueSize;                                        // maxQueueSize is the number of Transforms that will be stored.  2 seems like a fair number.  this gets reasonable direction results.
     public float minimumSliceDistanceForAudio;                      // the amount of distance the user has to swipe before a swipe sound is player... I.e. 5-10 units works well.
-    public float minimumTimeBetweenSwipes;     
+    public float minimumTimeBetweenSwipes;
     public AudioClip[] swordSlashSounds;                            // an array of AudeioCLips to be used as swipe sound.  I added several similar, 
     private float swordSwipeCounter;                                // this is the timer for the swipe Sound... (so that it doesn't continuously play sfx during constant movement.
     private Vector2 fingerPos;                                      // fingerPos is where we store Input.mousePosition and touch.position.. then we read fingerPos
@@ -26,15 +25,16 @@ public class FNCTouchSlicer : MonoBehaviour
     private Camera mainCamera;                                      // reference to our MainCamera.
     private Rigidbody thisRb;                                       // our variable that will hold a cached reference to this Rigidbody.
     private Transform thisTransform;                                // the variable that will hold a cached reference to this Transform.
-    private bool countdown;
+    //private bool countdown;
     // Use this for pre-initialization
     private static string slicerString = "";
     public string correctWord = "";
-    private Animator pineappleTweenIconAnim;            // a reference to the animator attached to a canvas in the scene(tweens the pineapple in top,left corner
-    void Awake()
-    {
+    public static bool trueWord = false;
+    public static bool trueLongerWord = false;
+    //private Animator pineappleTweenIconAnim;            // a reference to the animator attached to a canvas in the scene(tweens the pineapple in top,left corner
+    void Awake() {
         //pineappleTweenIconAnim = GameObject.FindGameObjectWithTag(Tags.PineappleTweenIcon).GetComponent<Animator>();
-        pineappleTweenIconAnim = GameObject.Find("PineappleCutFruitIcon").GetComponent<Animator>();
+        //pineappleTweenIconAnim = GameObject.Find("PineappleCutFruitIcon").GetComponent<Animator>();
         //assign this rigidbody to our thisRB variable.
         thisRb = GetComponent<Rigidbody>();
         //assign this transform to our thisTransform variable.
@@ -49,13 +49,12 @@ public class FNCTouchSlicer : MonoBehaviour
         sliceColliderParent = thisTransform.GetChild(0).gameObject;
         //then once we have the sliceColliderParent we set it inactive
         sliceColliderParent.SetActive(false);
-        countdown = false;
 
     }
 
     private void Start() {
         slicerString = "";
-        correctWord = "";
+        GameVariables.correct = "";
     }
 
     public static string getSlice() {
@@ -67,16 +66,12 @@ public class FNCTouchSlicer : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         //if we have emulateTouchesWithMouse checked/true then we run CheckForMouseMovement every frame, else we use touches and CheckForTouchMovement() every frame.
-        if (emulateTouchesWithMouse)
-        {
+        if(emulateTouchesWithMouse) {
             //call mouse move method
             CheckForMouseMovement();
-        }
-        else
-        {
+        } else {
             //else we call touch method
             CheckForTouchMovement();
         }
@@ -99,46 +94,43 @@ public class FNCTouchSlicer : MonoBehaviour
     /// </summary>
     /// <param name="other"></param>
 
-    public void OnTriggerEnter(Collider other)
-    {
+    public void OnTriggerEnter(Collider other) {
         //if the object in our trigger collider is a "Fruit" then...
 
-        if (other.CompareTag("Fruit"))
-        {
+        if(other.CompareTag("Fruit")) {
 
             //if the other object is also active in the scene hierarchy(we make this check because we also have a ray-caster destroying fruit... we don't want them to get a hold
             //of the same fruit simultaneously... so to be safe we ask... Is it still active? because if not it might be because the ray-cast already started killing it..
-            if (other.gameObject.activeInHierarchy)
-            {
+            if(other.gameObject.activeInHierarchy) {
                 string s = other.gameObject.name;
-                string ss = slicerString;
+                //string ss = slicerString;
                 slicerString += s.Substring(9, 1);
-                if (!CheckWords()) {
-                    if (correctWord.Length > 0) {
-                        AddToFruitDestroyedScore(correctWord.Length, true);
-                    }
-                    if(LauncherController.dictionary.Contains(ss.ToLower())) {
-                    //    AddToFruitDestroyedScore(ss.Length, true);
-                        slicerString = s.Substring(9, 1);
-                    //} else {
-                    //    AddToFruitDestroyedScore(ss.Length);
-                    //    slicerString = "";
-                    } else {
-                        slicerString = "";
-                    }
-                } else {
-                    if(LauncherController.dictionary.Contains(slicerString.ToLower())) {
-                        correctWord = slicerString;
-                        Debug.Log(correctWord);
-                    }
-                }
+                //if(!CheckWords()) {
+                //    if(GameVariables.correct.Length > 0) {
+                //        GameController.GameControllerInstance.AddToFruitDestroyedScore(GameVariables.correct.Length, true);
+                //        GameVariables.correct = "";
+                //    }
+                //    if(LauncherController.dictionary.Contains(ss.ToLower())) {
+                //        //    GameController.GameControllerInstance.AddToFruitDestroyedScore(ss.Length, true);
+                //        slicerString = s.Substring(9, 1);
+                //        //} else {
+                //        //    GameController.GameControllerInstance.AddToFruitDestroyedScore(ss.Length);
+                //        //    slicerString = "";
+                //    } else {
+                //        slicerString = "";
+                //    }
+                //} else {
+                //    if(LauncherController.dictionary.Contains(slicerString.ToLower())) {
+                //        GameVariables.correct = slicerString;
+                //    }
+                //}
                 //data = other.gameObject.GetComponent<WordData>();
                 //if (!listCollider.ContainsKey(data))
                 //{
                 //    listCollider.Add(data, other.gameObject);
 
                 //}
-                //AddToFruitDestroyedScore();
+                //GameController.GameControllerInstance.AddToFruitDestroyedScore();
                 //commented for release.
                 //Debug.Log("Collider is doing its job");
 
@@ -153,11 +145,9 @@ public class FNCTouchSlicer : MonoBehaviour
 
         }
         //if the object in our trigger collider is not a "Fruit", but it's a "BombOrPowerUp" then we have a similar approach but with a different class & method.
-        if (other.CompareTag("BombOrPowerUp"))
-        {
+        if(other.CompareTag("BombOrPowerUp")) {
             //again we make sure that the object is in fact still active in the scene hierarchy... hopefully because we don't want to try to destroy it the same time as the ray-casting counterpart.
-            if (other.gameObject.activeInHierarchy)
-            {
+            if(other.gameObject.activeInHierarchy) {
                 //commented out for release.
                 //Debug.Log("Power-up/Bomb Being Destroyed Via Collider");
 
@@ -165,7 +155,6 @@ public class FNCTouchSlicer : MonoBehaviour
                 DestroyBombOrPowerUp destroy = other.GetComponent<DestroyBombOrPowerUp>();
                 //then we call ActivateDestructionPerObjectType() on our new destroy variable.
                 destroy.ActivateDestructionPerObjecType();
-
             }
         }
 
@@ -178,14 +167,12 @@ public class FNCTouchSlicer : MonoBehaviour
     /// responsible for moving and activating the slicing collider and ray-casting into the scene to look for fruit to "cut".
     /// see ReleasSlicingDevice Method Summary for extra info.
     /// </summary>
-    private void GrabSlicingDevice()
-    {
+    private void GrabSlicingDevice() {
 
         //we assign thisRb.position to our newVec.  This will move the "slicer" to the newVec vector2 using ScreenToWorldPoint(fingerPos) from Update().
         thisRb.position = newVec;
         //if we have decided to use the Collider && Ray-cast ((currently recommended, but can cause extra "close" hits(bombs included))), then we will...
-        if (useColliderAndRaycast)
-        {
+        if(useColliderAndRaycast) {
             //now we set the slicerColliderParent to active... The Child GameObject of THIS GameObject...(just under the sliceParent is an empty GO with a box collider
             //protruding a ways down the z-axis.  Since we moved it to newVec first it shouldn't be active until after its in the new position.
 
@@ -202,8 +189,7 @@ public class FNCTouchSlicer : MonoBehaviour
         }
 
         //So now that the collider is active, and we are moving everywhere the finger/mouse moves, we start ray-casting by calling CheckForRaycastHit();
-        if (EventSystem.current.currentSelectedGameObject == null)
-        {
+        if(EventSystem.current.currentSelectedGameObject == null) {
             CheckForRaycastHit();
         }
 
@@ -217,8 +203,7 @@ public class FNCTouchSlicer : MonoBehaviour
     /// delay. (0.15f seems fine).  Since if the extra collider was not enabled we would be relying on the ray-cast solely anyway... its not that big of a deal to wait an extra
     /// .15 seconds for the activation.  I wish this wasn't necessary but it is.  Not sure why.
     /// </summary>
-    private void ActivateColliderAfterDelay()
-    {
+    private void ActivateColliderAfterDelay() {
         sliceColliderParent.SetActive(true);
     }
 
@@ -231,35 +216,31 @@ public class FNCTouchSlicer : MonoBehaviour
     /// slower loitering around the "edge of the fruit" will cause the collider to 
     /// destroy the fruit.
     /// </summary>
-    private void ReleaseSlicingDevice()
-    {
+    private void ReleaseSlicingDevice() {
         //again... if we have "useColliderAndRaycast" checked/true...
 
-        if (useColliderAndRaycast)
-        {
+        if(useColliderAndRaycast) {
             //cancel any invokes that are going on...
             CancelInvoke();
             //we set the sliceColliderParent to inactive.
             //sliceColliderParent.SetActive(false);
+            
             sliceColliderParent.SetActive(false);
+            positionQueue.Clear();
         }
     }
 
-    public bool CheckWords()
-    {
+    public bool CheckWords(string s) {
         ArrayList listWords = LauncherController.dictionary;
-        if (listWords != null && slicerString.Length > 0)
-        {
-            foreach (string s in listWords)
-            {
-                if (slicerString.Length > 0 && s.StartsWith(slicerString.ToLower()))
-                {
-                    return true;
-                }
-            }
-            /*if(listWords.Contains(slicerString.ToLower())) {
+        if(listWords != null && s.Length > 0) {
+            //foreach(string s in listWords) {
+            //    if(slicerString.Length > 0 && s.StartsWith(slicerString.ToLower())) {
+            //        return true;
+            //    }
+            //}
+            if(listWords.Contains(s.ToLower())) {
                 return true;
-            }*/
+            }
         }
 
         return false;
@@ -270,27 +251,22 @@ public class FNCTouchSlicer : MonoBehaviour
     /// This is how Grab/Release_SlicingDevice() is called.  Grab when we have a finger,movement, etc.., and
     /// release when we do not.
     /// </summary>
-    private void CheckForTouchMovement()
-    {
+    private void CheckForTouchMovement() {
 
         //if our touch count is greater than zero...
-        if (Input.touchCount > 0)
-        {
+        if(Input.touchCount > 0) {
             //loop through Input.touches
-            foreach (Touch touch in Input.touches)
-            {
+            //foreach(Touch touch in Input.touches) {
+            Touch touch = Input.GetTouch(0);
                 //in any of the touches if touch.phase has began.. then do this...
-                if (touch.phase == TouchPhase.Began)
-                {
-                    countdown = false;
+                if(touch.phase == TouchPhase.Began) {
                     //store touch.position in our "fingerPos" variable
                     fingerPos = touch.position;
                     //we call GrabSlicingDevice();
                     GrabSlicingDevice();
                 }
                 //if any of the touches have moved, then we also need to update our position data...
-                if (touch.phase == TouchPhase.Moved)
-                {
+                if(touch.phase == TouchPhase.Moved) {
                     //store touch.position in our "fingerPos" variable
                     fingerPos = touch.position;
 
@@ -303,8 +279,7 @@ public class FNCTouchSlicer : MonoBehaviour
 
                     //here we check to see if the float returned from our GetDistanceOfSliceGesture is greater than our "minimumSliceDistanceForAudio" (5 - 10 units..
                     // i use 7f), and if that is the case then we also make sure that our swordSwipeCounter is less than or equal to 0f.
-                    if (GetDistanceOfSliceGesture() > minimumSliceDistanceForAudio && swordSwipeCounter <= 0f)
-                    {
+                    if(GetDistanceOfSliceGesture() > minimumSliceDistanceForAudio && swordSwipeCounter <= 0f) {
                         //if the conditions are met then its time to play a slash sound!
 
                         //we use a oneShotAudio (PlayClipAtPoint) method to play a random swipe sound from our swordSlashSounds array, and then because PlayClipAtPoint
@@ -317,21 +292,74 @@ public class FNCTouchSlicer : MonoBehaviour
                     }
                 }
 
-                //finally if any of our touches have ended, then we need to call the ReleasSlicingDevice()
-                if (touch.phase == TouchPhase.Ended)
-                {
-                    //fingerPos = touch.position;
+            //finally if any of our touches have ended, then we need to call the ReleasSlicingDevice()
+            if(touch.phase == TouchPhase.Ended) {
+                //fingerPos = touch.position;
 
-                    //us calling the ReleasSlicingDevice()
-                    if(slicerString.Length > 0)
-                    {
-                        //ReleaseSlicingDevice();
-                        Debug.Log("end touch");
+                //us calling the ReleasSlicingDevice()
+                if(slicerString.Length > 0) {
+                    Debug.Log(GameVariables.longerWord);
+                    if(CheckWords(slicerString)) {
+                        GameController.GameControllerInstance.AddToFruitDestroyedScore(slicerString.Length, true);
+                        StartCoroutine(BiggerWord());
+                    } else {
+                        GameVariables.longerWord = "";
+                        slicerString = "";
+                        return;
                     }
-                    ReleaseSlicingDevice();
+                    if(GameVariables.longerWord == "") {
+                        if(CheckStart(slicerString))
+                            GameVariables.longerWord = slicerString;
+                    } else {
+                        string longer = GameVariables.longerWord + slicerString;
+                        if(CheckWords(longer)) {
+                            StartCoroutine(BiggerWord(longer));
+                            if(longer.Length > 5)
+                                GameVariables.ClassicModeScore += longer.Length * 2;
+                            else
+                                GameVariables.ClassicModeScore += longer.Length;
+
+                        } else {
+                            if(CheckStart(slicerString))
+                                GameVariables.longerWord = slicerString;
+                            else
+                                GameVariables.longerWord = "";
+                        }
+                    }
+                    slicerString = "";
                 }
+                ReleaseSlicingDevice();
             }
+            
         }
+
+    }
+
+    public IEnumerator BiggerWord() {
+        GameController.GameControllerInstance.wordText.text = slicerString;
+        GameController.GameControllerInstance.wordText.fontSize += 15;
+        GameController.GameControllerInstance.wordText.color = Color.yellow;
+        trueWord = true;
+        yield return new WaitForSeconds(0.5f);
+        trueWord = false;
+        GameController.GameControllerInstance.wordText.fontSize -= 15;
+        GameController.GameControllerInstance.wordText.color = new Color(255, 255, 255, 255);
+    }
+
+    public IEnumerator BiggerWord(string longer) {
+        GameVariables.longerWord = longer;
+        GameController.GameControllerInstance.longerWord.text = longer;
+        GameController.GameControllerInstance.longerWord.fontSize += 5;
+        GameController.GameControllerInstance.longerWord.color = Color.red;
+        trueLongerWord = true;
+        yield return new WaitForSeconds(0.5f);
+        trueLongerWord = false;
+        GameController.GameControllerInstance.longerWord.fontSize -= 5;
+        GameController.GameControllerInstance.longerWord.color = new Color(255, 255, 255, 255);
+        if(CheckStart(longer))
+            GameVariables.longerWord = longer;
+        else
+            GameVariables.longerWord = "";
 
     }
 
@@ -345,23 +373,19 @@ public class FNCTouchSlicer : MonoBehaviour
     /// Touches, but when testing in the editor, I usually like to use the mouse.  It prevents constant builds being required
     /// to test little changes
     /// </summary>
-    private void CheckForMouseMovement()
-    {
+    private void CheckForMouseMovement() {
         //if left mouse button has been clicked down
-        if (Input.GetMouseButtonDown(0))
-        {
+        if(Input.GetMouseButtonDown(0)) {
 
             //store the mouse position in fingerPos variable(whether we use mouse or touch inputs we use the same variable)
             fingerPos = Input.mousePosition;
-            countdown = false;
 
             //if the left button is clicked "down" this frame or like below when we check if the left button is "held" down.
             //we call the GrabSlicingDevice() method;
             GrabSlicingDevice();
 
         }
-        if (Input.GetMouseButton(0))
-        {
+        if(Input.GetMouseButton(0)) {
             //if left click is "held" down then we update our fingerPos variable with the mouse position.
             fingerPos = Input.mousePosition;
 
@@ -375,8 +399,7 @@ public class FNCTouchSlicer : MonoBehaviour
             //here we use our GetDistanceOfSliceGesture() method.  We determine if the current "distance" is greater than the
             //minimum required distance to play the "slash" sound, and if the timer that allows the sound to only play every half
             //a second or so.  That way it doesn't constantly play the slash sound)
-            if (GetDistanceOfSliceGesture() > minimumSliceDistanceForAudio && swordSwipeCounter <= 0f)
-            {
+            if(GetDistanceOfSliceGesture() > minimumSliceDistanceForAudio && swordSwipeCounter <= 0f) {
                 //play slash sound!
                 AudioSource.PlayClipAtPoint(swordSlashSounds[Random.Range(0, swordSlashSounds.Length)], new Vector3(0, 0, -75));
                 //reset the swordSwipeCounter to default value.(it will start being reduced again when someone is holding/moving
@@ -386,16 +409,45 @@ public class FNCTouchSlicer : MonoBehaviour
 
         }
         //if the mouse button was release then it is time to stop dragging/moving the slicer...
-        if (Input.GetMouseButtonUp(0))
-        {
+        if(Input.GetMouseButtonUp(0)) {
             //we call release slicing device... and we are done!
-            if (slicerString.Length > 0)
-            {
-                //ReleaseSlicingDevice();
-                Debug.Log("end touch");
+            //if(slicerString.Length > 0) {
+            //    //ReleaseSlicingDevice();
+            //    Debug.Log("end touch");
+            //}
+            if(slicerString.Length > 0) {
+                Debug.Log(GameVariables.longerWord);
+                if(CheckWords(slicerString)) {
+                    GameController.GameControllerInstance.AddToFruitDestroyedScore(slicerString.Length, true);
+                    StartCoroutine(BiggerWord());
+                } else {
+                    GameVariables.longerWord = "";
+                    slicerString = "";
+                    return;
+                }
+                if(GameVariables.longerWord == "") {
+                    if(CheckStart(slicerString))
+                        GameVariables.longerWord = slicerString;
+                } else {
+                    string longer = GameVariables.longerWord + slicerString;
+                    if(CheckWords(longer)) {
+                        StartCoroutine(BiggerWord(longer));
+                        if(longer.Length > 5)
+                            GameVariables.ClassicModeScore += longer.Length * 2;
+                        else
+                            GameVariables.ClassicModeScore += longer.Length;
+
+                    } else {
+                        if(CheckStart(slicerString))
+                            GameVariables.longerWord = slicerString;
+                        else
+                            GameVariables.longerWord = "";
+                    }
+                }
+                slicerString = "";
             }
             ReleaseSlicingDevice();
-            
+
             //***NOTE***
             //This CheckForMouseMovement() is almost identical to the CheckForTouchMovement().the
             //comments for this method are a little older, and therefore not a copy and paste of the Touch version, but they say
@@ -403,6 +455,15 @@ public class FNCTouchSlicer : MonoBehaviour
         }
 
 
+    }
+
+    public bool CheckStart(string s) {
+        foreach (string i in LauncherController.dictionary) {
+            if(i.StartsWith(s.ToLower()) && i.Length != s.Length) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /// <summary>
@@ -424,11 +485,9 @@ public class FNCTouchSlicer : MonoBehaviour
     /// but occasionally struggled with texture projection.  This project went through way to many iterations/re-factors, and asset creation, and since it's a free kit
     /// I had to draw a line... so the cheaper, more performant, and not so pretty option was chosen. :-(
     /// </remarks>
-    private void AddSlicerPositionToQueue()
-    {
+    private void AddSlicerPositionToQueue() {
         //if our positionQueue is already full then...
-        if (positionQueue.Count >= maxQueueSize)
-        {
+        if(positionQueue.Count >= maxQueueSize) {
             //we need to dequeue the oldest entry
             positionQueue.Dequeue();
 
@@ -445,8 +504,7 @@ public class FNCTouchSlicer : MonoBehaviour
     /// queue.
     /// </summary>
     /// <returns>This method returns a vector3 that is the direction FNCTouchSlicer is moving.</returns>
-    public Vector3 GetSlicerDirection()
-    {
+    public Vector3 GetSlicerDirection() {
         //we create a new vec3 variable named slicerDirection and we store our position minus the oldest entry in our position queue.
         Vector3 slicerDirection = thisTransform.position - positionQueue.Peek();
         //then we return the slicerDirection that we created.
@@ -461,8 +519,7 @@ public class FNCTouchSlicer : MonoBehaviour
     /// a slash sound.  There are other uses for it but that is currently the only thing it is used for.
     /// </summary>
     /// <returns>Method returns the distance between our current position and the oldest position in our positionQueue in the form of a float.</returns>
-    private float GetDistanceOfSliceGesture()
-    {
+    private float GetDistanceOfSliceGesture() {
         //we create a new float named "dist" and use Vector3.Distance to return the distance between our position and the oldest position in our positionQueue
         float dist = Vector3.Distance(thisTransform.position, positionQueue.Peek());
         //then we return that distance as a float.
@@ -479,8 +536,7 @@ public class FNCTouchSlicer : MonoBehaviour
     /// </summary>
     /// <returns>This method returns an integer which we feed to our FruitDestroy's "CutFruit(int)" Method.  0 = vertical, 1 = horizontal,
     /// 2 = 1Diagonal, 3 = Diagonal </returns>
-    private int SpawnProperFruitDebris()
-    {
+    private int SpawnProperFruitDebris() {
 
         //OK. Our float variable "angle" get assigned the result of Mathf.Atan2(x,y) * 57.2957795f (this is 360 / pi * 2).  as opposed to
         //using Mathf.Rad2Deg we use the float amt it would return anyway... Mathf is expensive enough to use, maybe not so much in Rad2Deg,
@@ -505,14 +561,12 @@ public class FNCTouchSlicer : MonoBehaviour
 
         ////// UP & DOWN //////
 
-        if (angle > 157.5f || angle < -157.5f)
-        {
+        if(angle > 157.5f || angle < -157.5f) {
             //swipe down
             return 0;
         }
 
-        if (angle > -22.5f && angle < 22.5f)
-        {
+        if(angle > -22.5f && angle < 22.5f) {
             //swipe up
             return 0;
         }
@@ -520,14 +574,12 @@ public class FNCTouchSlicer : MonoBehaviour
 
         ////// LEFT & RIGHT //////
 
-        if (angle > 67.5f && angle < 112.5f)
-        {
+        if(angle > 67.5f && angle < 112.5f) {
             //swipe right
             return 1;
         }
 
-        if (angle > -112.5f && angle < -67.5f)
-        {
+        if(angle > -112.5f && angle < -67.5f) {
             //swipe left
             return 1;
         }
@@ -542,35 +594,31 @@ public class FNCTouchSlicer : MonoBehaviour
         ////////////////
 
 
-        ////// 1DIAGONAL //////
+        //////// 1DIAGONAL //////
 
-        if (angle > 22.5 && angle < 67.5)
-        {
-            //up and right
-            return 2;
+        //if(angle > 22.5 && angle < 67.5) {
+        //    //up and right
+        //    return 2;
 
-        }
-        if (angle > -157.5 && angle < -112.5)
-        {
-            //down and left
-            return 2;
+        //}
+        //if(angle > -157.5 && angle < -112.5) {
+        //    //down and left
+        //    return 2;
 
-        }
+        //}
 
-        ////// DIAGONAL //////
+        //////// DIAGONAL //////
 
-        if (angle > -67.5 && angle < -22.5)
-        {
-            //up and left
-            return 3;
+        //if(angle > -67.5 && angle < -22.5) {
+        //    //up and left
+        //    return 3;
 
-        }
-        if (angle > 112.5 && angle < 157.5)
-        {
-            //down and right
-            return 3;
+        //}
+        //if(angle > 112.5 && angle < 157.5) {
+        //    //down and right
+        //    return 3;
 
-        }
+        //}
 
         ///////////////////
 
@@ -586,48 +634,15 @@ public class FNCTouchSlicer : MonoBehaviour
 
     /// <summary>
     /// This method adds 1 to the player score based on the gameMode they are playing.  The scores Are kept individually,
-    /// because some of the gameModes are more difficult than others... so there is a WordGuess,Classic, and RelaxModeScore.
-    /// </summary>
-    public void AddToFruitDestroyedScore(int length = 0, bool correct = false)
-    {
-        //if the GameControllers "gameModes" var is set to GameModes.WordGuess then...
-        if (GameController.GameControllerInstance.gameModes == GameModes.WordGuess)
-        {
-            //then WordGuessModeScore gets incremented by 1 :-)
-            if(!correct) {
-                GameVariables.WordGuessModeScore += length;
-            } else {
-                GameVariables.WordGuessModeScore += length;
-                TwoTimesScoreEffect tw = GameObject.FindGameObjectWithTag(Tags.twoTimesScoreEffectGameObjectTag).GetComponent<TwoTimesScoreEffect>();
-                if(tw.twoTimesScoreIsOn) {
-                    GameVariables.WordGuessModeScore += length;
-                }
-            }
-        }
-
-        ////if the GameControllers "gameModes" var is set to GameModes.Classic then...
-        //if (GameController.GameControllerInstance.gameModes == GameModes.Classic)
-        //{
-        //    //then ClassicModeScore gets incremented by 1 :-)
-        //    GameVariables.ClassicModeScore++;
-        //}
-
-        //if the GameControllers "gameModes" var is set to GameModes.Relax then...
-        if (GameController.GameControllerInstance.gameModes == GameModes.Relax)
-        {
-            //then RelaxModeScore gets incremented by 1 :-)
-            GameVariables.RelaxModeScore++;
-        }
-
-    }
+    /// because some of the gameModes are more difficult than others... so there is a Classic,Classic, and RelaxModeScore.
+    /// </summar
 
 
     /// <summary>
     /// This Method is responsible for "destroying" our fruit if we swipe across them.  The ray-cast comes from the
     /// camera and ends at the location of the fruit(after ScreenPointToRay().
     /// </summary>
-    private void CheckForRaycastHit()
-    {
+    private void CheckForRaycastHit() {
         //create a RaycastHit var and name it hit;
         RaycastHit hit;
         //create a Ray named ray, and give it the value of ScreenPointToRay(our fingerPos)
@@ -636,20 +651,17 @@ public class FNCTouchSlicer : MonoBehaviour
         //Ray-cast into our scene but only to our custom layer mask (myFruitAndPowerUpLayerMask)...
         //which only contains the "Fruit", and "PowerUp/Bomb" Layers.  We are only ray-casting 100 units
         //into scene
-        if (Physics.Raycast(ray, out hit, 100f, sliceableObjects))
-        {
+        if(Physics.Raycast(ray, out hit, 100f, sliceableObjects)) {
 
             //we store our hit object in a new GameObject we create named hitObj.
             GameObject hitObj = hit.transform.gameObject;
             //Debug.Log("Ray-cast is doing its job");
 
             //if the hitObj has a tag of "Fruit"...
-            if (hitObj.CompareTag("Fruit"))
-            {
+            if(hitObj.CompareTag("Fruit")) {
                 //make sure the obj is still active in the scene(make sure the onTriggerEnter event did not
                 //already start deactivating this gameobject)
-                if (hitObj.activeInHierarchy)
-                {
+                if(hitObj.activeInHierarchy) {
 
                     //gibs to use is assigned the value that SpawnProperFruitDebris() returns.  We will need
                     //this for later when we destroy the fruit.
@@ -661,13 +673,10 @@ public class FNCTouchSlicer : MonoBehaviour
                     destroy.CutFruit(/*debrisRot,*/ gibsToUse);
 
                 }
-            }
-            else
-            {
+            } else {
                 //else since the tag is not "Fruit" and there was only 2 objects on our LayerMask(which is Fruit and PowerUp/Bombs)
                 //then it has to be a power-up or a bomb... so we assume it is and move forward.
-                if (hitObj.activeInHierarchy)
-                {
+                if(hitObj.activeInHierarchy) {
                     //we again create a new variable but this time its for our PowerUp/Bomb class "DestroyBombOrPowerUp". We
                     // GetComponent on our objHit and then after words we call the "ActivateDestructionPerObjecttype()".
                     DestroyBombOrPowerUp destroy = hitObj.GetComponent<DestroyBombOrPowerUp>();

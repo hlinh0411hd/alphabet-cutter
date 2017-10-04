@@ -4,7 +4,7 @@ using System.Collections;
 
 /// <summary>
 /// The CountdownTimer Class manages the Round Timer(the GameController manages the less feature complete bomb, power-up, and launch timers).
-/// Again.. this Method only handles the round timer for WordGuess and classic mode.
+/// Again.. this Method only handles the round timer for Classic and classic mode.
 /// </summary>
 public class CountdownTimer : MonoBehaviour
 {
@@ -30,7 +30,7 @@ public class CountdownTimer : MonoBehaviour
     void Start()
     {
         //set text.color to the color we set for "startColor" in the inspector.
-        if (GameController.GameControllerInstance.gameModes == GameModes.WordGuess) {
+        if (GameController.GameControllerInstance.gameModes == GameModes.Classic) {
             uiText.text = "0";
         }
         uiText.color = startColor;
@@ -74,7 +74,7 @@ public class CountdownTimer : MonoBehaviour
         }
         // we call our ReduceTime method every frame.
 
-        if(GameController.GameControllerInstance.gameModes != GameModes.WordGuess)
+        if(GameController.GameControllerInstance.gameModes != GameModes.Classic)
             ReduceTime();
     }
 
@@ -136,7 +136,7 @@ public class CountdownTimer : MonoBehaviour
         while (!stop)
         {
 
-            if(GameController.GameControllerInstance.gameModes != GameModes.WordGuess) {    // if timeLeft is greater than timeTextStartsFlashing then... regular countdown behavior(i.e. no flashing/color change)
+            if(GameController.GameControllerInstance.gameModes != GameModes.Classic) {    // if timeLeft is greater than timeTextStartsFlashing then... regular countdown behavior(i.e. no flashing/color change)
                 if(timeLeft > timeTextStartsFlashing) {
                     // use string.Format to change the uiText's text to be formatted like a typical "clock" layout.
                     uiText.text = string.Format("{0:0}:{1:00}", minutes, seconds);

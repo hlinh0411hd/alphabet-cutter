@@ -252,7 +252,7 @@ public class DestroyBombOrPowerUp : MonoBehaviour
 
 
     /// <summary>
-    /// This is the Method to call when destroying a Minus Ten Points Bomb in WordGuess mode.  Then we make sure
+    /// This is the Method to call when destroying a Minus Ten Points Bomb in Classic mode.  Then we make sure
     /// there are 10 points to remove from the score.  If not we set the score to 0.  We instantiate an animated 
     /// bomb explosion(gibs), and a explosion effect particle system.  Next we call subtle camera shake, and 
     /// chromatic aberration methods.  Lastly it calls a Method that creates a blast wave that pushes fruit away.
@@ -261,16 +261,16 @@ public class DestroyBombOrPowerUp : MonoBehaviour
     void MinusTenPointsBombDestroy()
     {
         // if the score is greater than 10 then...
-        if (GameVariables.WordGuessModeScore > 10)
+        if (GameVariables.ClassicModeScore > 10)
         {
             //we know we can remove 10 points;
-            GameVariables.WordGuessModeScore -= 10;
+            GameVariables.ClassicModeScore -= 10;
         }
         //if the player score is less than 10 points...
         else
         {
             //lets just make the score 0;
-            GameVariables.WordGuessModeScore = 0;
+            GameVariables.ClassicModeScore = 0;
         }
 
         //Instantiate the minusTenBombGibs (Which is a prefab that is set to play a unity animation

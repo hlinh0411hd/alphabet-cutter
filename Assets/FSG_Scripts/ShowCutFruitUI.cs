@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 public class ShowCutFruitUI : MonoBehaviour
 {
-    public Text[] WordGuessModeCutFruitText;           // the Text elements for WordGuess mode
+    public Text[] ClassicModeCutFruitText;           // the Text elements for Classic mode
     public Text[] classicModeCutFruitText;          // the Text elements for classic mode
     public Text[] relaxModeCutFruitText;            // the Text elements for relax mode
 
@@ -27,21 +27,13 @@ public class ShowCutFruitUI : MonoBehaviour
     private void DeactivateAllAndSelectCutTextPerMode()
     {
 
-        //first loop through all WordGuessMode Text elements in the array
-        for (int i = 0; i < WordGuessModeCutFruitText.Length; i++)
+        //first loop through all ClassicMode Text elements in the array
+        for (int i = 0; i < ClassicModeCutFruitText.Length; i++)
         {
             //then each element [i] gets set disabled.
-            WordGuessModeCutFruitText[i].enabled = false;
+            ClassicModeCutFruitText[i].enabled = false;
         }
-
-
-        //first loop through all classicMode Text elements in the array
-        for (int j = 0; j < classicModeCutFruitText.Length; j++)
-        {
-            //then each element [i] gets set disabled.
-            classicModeCutFruitText[j].enabled = false;
-        }
-
+        
 
         //first loop through all relaxMode Text elements in the array
         for (int k = 0; k < relaxModeCutFruitText.Length; k++)
@@ -65,14 +57,14 @@ public class ShowCutFruitUI : MonoBehaviour
             //        classicModeCutFruitText[i].enabled = true;
             //    }
             //    break;
-            //if GameController's gameMode equals GameModes.WordGuess then...
-            case GameModes.WordGuess:
+            //if GameController's gameMode equals GameModes.Classic then...
+            case GameModes.Classic:
 
                 //we loop back through an array of the text elements...
-                for (int i = 0; i < WordGuessModeCutFruitText.Length; i++)
+                for (int i = 0; i < ClassicModeCutFruitText.Length; i++)
                 {
                     // and set all of the elements to enabled!
-                    WordGuessModeCutFruitText[i].enabled = true;
+                    ClassicModeCutFruitText[i].enabled = true;
                 }
                 break;
             //if GameController's gameMode equals GameModes.Relax then...
